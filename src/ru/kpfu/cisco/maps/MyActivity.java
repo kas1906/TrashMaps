@@ -26,6 +26,7 @@ public class MyActivity extends Activity {
         webView.getSettings().setAllowContentAccess(true);
         webView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
         webClient.shouldOverrideUrlLoading(webView, "file:///android_asset/index.html");
+        webClient.shouldOverrideUrlLoading(webView, "javascript:addTruck('[55.770324,37.377022]')");
     }
 
 

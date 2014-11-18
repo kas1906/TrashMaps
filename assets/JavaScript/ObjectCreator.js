@@ -1,16 +1,9 @@
-/**
- * Created by Кель on 18.11.2014.
- */
-var myMap;
-var placeMarks = [];
-var clicked = [];
-
 function addPlaceMark(coord) {
     var myPlacemark = new ymaps.Placemark(coord, {
         hintContent: 'Trash'
     }, {
         iconLayout: 'default#image',
-        iconImageHref: 'http://lampu.tokoled.net/trash.png',
+        iconImageHref: './images/trash.png',
         iconImageSize: [20, 20]
     });
     myMap.geoObjects.add(myPlacemark);
@@ -28,16 +21,48 @@ function addPlaceMark(coord) {
 
 }
 
-ymaps.ready(function () {
-    myMap = new ymaps.Map('map', {
-        center: [55.751574, 37.573856],
-        zoom: 10
+function addTruck(coord) {
+    var myPlacemark = new ymaps.Placemark(coord, {
+        hintContent: 'TrashTruck'
+    }, {
+        iconLayout: 'default#image',
+        iconImageHref: './images/truck.png',
+        iconImageSize: [20, 20],
+        draggable: true
     });
-    addPlaceMark([55.771574, 37.573856]);
-    addPlaceMark([55.76, 37.67]);
-    addPlaceMark([55.66, 37.47]);
-    //55.72, 37.57
+    myMap.geoObjects.add(myPlacemark);
+    placeMarks.push(myPlacemark);
+    myPlacemark.events
+        .add('click', function (e) {
+            var index;
+            if ((index = clicked.indexOf(myPlacemark)) >= 0) {
+                clicked.splice(index, 1);
+            } else {
+                clicked.push(myPlacemark);
+            }
+            console.log(clicked);
+        });
 
+}
+
+function addRoute() {
+    ymaps.route([
+        [55.771574, 37.573856],
+        [55.76, 37.67],
+        [55.72, 37.57],
+        [55.66, 37.47]
+    ]).then(function (route) {
+        currentRoute = route;
+        myMap.geoObjects.add(route);
+        var points = route.getWayPoints(),
+            lastPoint = points.getLength() - 1;
+        points.options.set('iconImageHref', './images/transparent.png');
+    }, function (error) {
+        alert('Возникла ошибка: ' + error.message);
+    });
+}
+
+function getCities() {
     // Создадим собственный макет выпадающего списка.
     ListBoxLayout = ymaps.templateLayoutFactory.createClass(
         "<button id='my-listbox-header' class='btn btn-success dropdown-toggle' data-toggle='dropdown'>" +
@@ -50,7 +75,7 @@ ymaps.ready(function () {
         " class='dropdown-menu' role='menu' aria-labelledby='dropdownMenu'" +
         " style='display: {% if state.expanded %}block{% else %}none{% endif %};'></ul>", {
 
-            build: function() {
+            build: function () {
 
                 // Вызываем метод build родительского класса перед выполнением
                 // дополнительных действий.
@@ -140,5 +165,5 @@ ymaps.ready(function () {
         }
     });
 
-    myMap.controls.add(listBox, {float: 'left'});
-});
+    return listBox;
+}
