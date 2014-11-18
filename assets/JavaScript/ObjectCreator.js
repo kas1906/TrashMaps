@@ -3,7 +3,7 @@ function addPlaceMark(coord) {
         hintContent: 'Trash'
     }, {
         iconLayout: 'default#image',
-        iconImageHref: './images/trash.png',
+        iconImageHref: 'file:///android_asset/Images/trash.png',
         iconImageSize: [20, 20]
     });
     myMap.geoObjects.add(myPlacemark);
@@ -26,7 +26,7 @@ function addTruck(coord) {
         hintContent: 'TrashTruck'
     }, {
         iconLayout: 'default#image',
-        iconImageHref: './images/truck.png',
+        iconImageHref: 'file:///android_asset/Images/truck.png',
         iconImageSize: [20, 20],
         draggable: true
     });

@@ -1,0 +1,4 @@
+addPlaceMark([55.771574, 37.573856]);
+addPlaceMark([55.76, 37.67]);
+addPlaceMark([55.66, 37.47]);
+addTruck([55.72, 37.57]);
