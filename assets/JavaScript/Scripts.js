@@ -7,19 +7,23 @@ var clicked = [];
 var routeClicked = false;
 var currentRoute;
 
-function parameterStringBuilder() {
-    var out = "";
+function parameterBuilder() {
+    var out = [];
+    for (var index = 0; index < clicked.length; index++) {
+        out[index] = clicked[index].geometry.getCoordinates();
+    }
+    console.log(out);
+    return out;
 
 }
 
 ymaps.ready(function () {
 
     myMap = new ymaps.Map('map', {
-        center: [55.751574, 37.573856],
-        zoom: 11,
-        type : 'yandex#satellite'
+        center: [55.796395,49.106971],
+        zoom: 13,
+        type: 'yandex#satellite'
     }), firstButton = new ymaps.control.Button("Построить маршрут"),
-        listBox = getCities();
     myMap.controls.add(firstButton, {float: 'right'});
     firstButton.events.add('click', function (e) {
         if (!routeClicked) {
@@ -29,13 +33,14 @@ ymaps.ready(function () {
         } else {
             firstButton.data.set('content', "Построить маршрут");
             routeClicked = false;
-            //location.reload(true);
             myMap.geoObjects.remove(currentRoute);
         }
     });
 
-    addPlaceMark([55.771574, 37.573856]);
-    addPlaceMark([55.76, 37.67]);
-    addPlaceMark([55.66, 37.47]);
-    addTruck([55.72, 37.57]);
+
+
+    addPlaceMark([55.793288,49.126733]);
+    addPlaceMark([55.797047,49.092043]);
+    addPlaceMark([55.801211,49.140748]);
+    addTruck([55.773556,49.151588]);
 });
