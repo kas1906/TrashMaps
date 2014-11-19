@@ -18,29 +18,37 @@ function parameterBuilder() {
 }
 
 ymaps.ready(function () {
-
     myMap = new ymaps.Map('map', {
-        center: [55.796395,49.106971],
+        center: [55.796395, 49.106971],
         zoom: 13,
-        type: 'yandex#satellite'
-    }), firstButton = new ymaps.control.Button("Построить маршрут"),
-    myMap.controls.add(firstButton, {float: 'right'});
-    firstButton.events.add('click', function (e) {
+        type: 'yandex#satellite',
+        controls: []
+    }), routeButton = new ymaps.control.Button("Построить маршрут"),
+        myMap.controls.add(routeButton, {float: 'right'});
+    routeButton.events.add('click', function (e) {
         if (!routeClicked) {
             addRoute();
-            firstButton.data.set('content', "Убрать маршрут");
+            routeButton.data.set('content', "Убрать маршрут");
             routeClicked = true;
         } else {
-            firstButton.data.set('content', "Построить маршрут");
+            routeButton.data.set('content', "Построить маршрут");
             routeClicked = false;
             myMap.geoObjects.remove(currentRoute);
         }
     });
 
+    var changeButton = new ymaps.control.Button({
+        data: {
+            content: "Сменрить тип карты"
+        },
+        options: {
+            maxWidth: [28, 150, 178]
+        }
+    });
+    map.controls.add(secondButton);
 
-
-    addPlaceMark([55.793288,49.126733]);
-    addPlaceMark([55.797047,49.092043]);
-    addPlaceMark([55.801211,49.140748]);
-    addTruck([55.773556,49.151588]);
+    addPlaceMark([55.793288, 49.126733]);
+    addPlaceMark([55.797047, 49.092043]);
+    addPlaceMark([55.801211, 49.140748]);
+    addTruck([55.773556, 49.151588]);
 });
