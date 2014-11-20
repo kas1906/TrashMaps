@@ -2,6 +2,8 @@ package ru.kpfu.cisco.maps;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
@@ -16,7 +18,9 @@ public class MyActivity extends Activity {
      * Called when the activity is first created.
      */
     private WebView webView;
-    private boolean newSms = false;
+    public static boolean newSms = false;
+    public static String smsText = "";
+    public static long lastSmsId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,9 +63,8 @@ public class MyActivity extends Activity {
 
         @JavascriptInterface
         public String getLastSms() {
-            String out = "";
-
-            return out;
+            newSms = false;
+            return smsText;
         }
 
     }

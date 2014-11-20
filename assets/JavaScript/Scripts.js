@@ -11,6 +11,9 @@ var buckets = [];
 var areas = [];
 var mainArea;
 var isAreasShown = false, isTruckVisible = true, isBucketsVisible = true, isSatelliteMode = false;
+var lastId = -123;
+
+
 
 function changeZoneColor(color) {
     mainArea.options.set('fillColor', color);
@@ -134,6 +137,12 @@ ymaps.ready(function () {
         var longitude = ymaps.geolocation.longitude;
         console.log(latitude);
         console.log(longitude);
+
+    setInterval(function() {
+        if (app.hasNewSms()) {
+            app.makeToast(app.getLastSms(), false);
+        }
+    }, 1000)
 
     drawAreas();
     hideAreas();
