@@ -1,27 +1,50 @@
+
+var green = '#6EE76888';
+var yellow = '#fafa0a88';
+var red = '#eb323288';
+
+var icons = [2, 3, 0, 0, 0];
+
 function addPlaceMark(coord) {
     var myPlacemark = new ymaps.Placemark(coord, {
         hintContent: 'Trash'
     }, {
         iconLayout: 'default#image',
         //iconImageHref: 'file:///android_asset/Images/trash.png',
-        iconImageHref: 'Images/trash.png',
+        iconImageHref: 'Icons/trash.png',
         iconImageSize: [30, 30]
     });
     myMap.geoObjects.add(myPlacemark);
     placeMarks.push(myPlacemark);
+    buckets.push(myPlacemark);
     myPlacemark.events
         .add('click', function (e) {
             var index;
             if ((index = clicked.indexOf(myPlacemark)) >= 0) {
                 clicked.splice(index, 1);
-                alert('unclicked')
+                console.log(index);
+                switch (icons[buckets.indexOf(myPlacemark)]) {
+                    case 0:
+                        myPlacemark.options.set('iconImageHref', 'Icons/trash.png');
+                        break;
+                    case 1:
+                        myPlacemark.options.set('iconImageHref', 'Icons/trash-yellow-stroke.png');
+                        break;
+                    case 2:
+                        myPlacemark.options.set('iconImageHref', 'Icons/trash-orange-stroke.png');
+                        break;
+                    case 3:
+                        myPlacemark.options.set('iconImageHref', 'Icons/trash-red-stroke.png');
+                        break;
+                }
             } else {
                 clicked.push(myPlacemark);
-                alert('clicked')
+                myPlacemark.options.set('iconImageHref', 'Icons/trash-blue-stroke.png');
             }
-            console.log(clicked);
+
 
         });
+
 
 }
 
@@ -31,25 +54,23 @@ function addTruck(coord) {
     }, {
         iconLayout: 'default#image',
         //iconImageHref: 'file:///android_asset/Images/truck.png',
-        iconImageHref: 'Images/truck.png',
-        iconImageSize: [20, 20],
-        draggable: true
+        iconImageHref: 'Icons/garbage-truck.png',
+        iconImageSize: [50, 30]
     });
     myPlacemark.events
         .add('click', function (e) {
             var index;
             if ((index = clicked.indexOf(myPlacemark)) >= 0) {
                 clicked.splice(index, 1);
-                alert('unclicked')
+                myPlacemark.options.set('iconImageHref', 'Icons/garbage-truck.png');
             } else {
                 clicked.push(myPlacemark);
-                alert('clicked')
+                myPlacemark.options.set('iconImageHref', 'Icons/garbage-truck-blue-stroke.png');
             }
-            console.log(clicked);
-
         });
     placeMarks.push(myPlacemark);
     myMap.geoObjects.add(myPlacemark);
+    trucks.push(myPlacemark);
 }
 
 
@@ -67,15 +88,19 @@ function addRoute() {
     });
 }
 
-function addPolygon(array) {
+function addPolygon(array, flag) {
     var myPolygon = new ymaps.Polygon([
         array
     ], {
         hintContent: "Многоугольник"
     }, {
-        fillColor: '#00FF0088',
+        fillColor: green,
         strokeWidth: 5
     });
 
     myMap.geoObjects.add(myPolygon);
+    if (flag) {
+        mainArea = myPolygon;
+    }
+    areas.push(myPolygon);
 }
