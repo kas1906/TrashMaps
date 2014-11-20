@@ -10,13 +10,39 @@ var trucks = [];
 var buckets = [];
 var areas = [];
 var mainArea;
-var isAreasShown = false, isTruckVisible = true, isBucketsVisible = true, isSatelliteMode = false;
+var realBucket;
+var curAutoRoute;
+var isAreasShown = false, isTruckVisible = true, isBucketsVisible = true, isSatelliteMode = false, isAutoRouted = false;
 var lastId = -123;
-
 
 
 function changeZoneColor(color) {
     mainArea.options.set('fillColor', color);
+}
+
+function autoRoute() {
+    if (!isAutoRouted) {
+        isAutoRouted = true;
+        ymaps.route([
+                [55.773556, 49.171588],
+                [55.752654, 49.166603],
+                [55.793288, 49.126733],
+                [55.801211, 49.140748]
+            ]
+        ).then(function (route) {
+                curAutoRoute = route;
+                myMap.geoObjects.add(route);
+                var points = route.getWayPoints(),
+                    lastPoint = points.getLength() - 1;
+                points.options.set('iconImageHref', './images/transparent.png');
+                console.log(points);
+            }, function (error) {
+                alert('Возникла ошибка: ' + error.message);
+            });
+    } else {
+        isAutoRouted = false;
+        myMap.geoObjects.remove(curAutoRoute);
+    }
 }
 
 function drawAreas() {
@@ -122,35 +148,78 @@ function drawCustomRoute() {
     } else {
         routeClicked = false;
         myMap.geoObjects.remove(currentRoute);
+        for (var i = 0; i <= clicked.length; i++) {
+            if (trucks.indexOf(clicked[i]) >= 0) {
+                clicked[i].options.set('iconImageHref', 'Icons/garbage-truck.png');
+            } else {
+                switch (icons[buckets.indexOf(clicked[i])]) {
+                    case 0:
+                        clicked[i].options.set('iconImageHref', 'Icons/trash.png');
+                        break;
+                    case 1:
+                        clicked[i].options.set('iconImageHref', 'Icons/trash-yellow-stroke.png');
+                        break;
+                    case 2:
+                        clicked[i].options.set('iconImageHref', 'Icons/trash-orange-stroke.png');
+                        break;
+                    case 3:
+                        clicked[i].options.set('iconImageHref', 'Icons/trash-red-stroke.png');
+                        break;
+                }
+            }
+        }
+        clicked = [];
     }
+
 }
 
 ymaps.ready(function () {
-        myMap = new ymaps.Map('map', {
-            center: [55.796395, 49.106971],
-            zoom: 12,
-            type: 'yandex#map',
-            controls: []
-        });
+    myMap = new ymaps.Map('map', {
+        center: [55.796395, 49.106971],
+        zoom: 12,
+        type: 'yandex#map',
+        controls: []
+    });
 
-        var latitude = ymaps.geolocation.latitude;
-        var longitude = ymaps.geolocation.longitude;
-        console.log(latitude);
-        console.log(longitude);
+    var latitude = ymaps.geolocation.latitude;
+    var longitude = ymaps.geolocation.longitude;
+    console.log(latitude);
+    console.log(longitude);
 
-    setInterval(function() {
+    setInterval(function () {
         if (app.hasNewSms()) {
-            app.makeToast(app.getLastSms(), false);
+            var text = app.getLastSms();
+            app.makeToast(text, true);
+            switch (text) {
+                case '0':
+                    realBucket.options.set('iconImageHref', 'Icons/trash.png');
+                    changeZoneColor(yellow);
+                    break;
+                case '1':
+                    realBucket.options.set('iconImageHref', 'Icons/trash-yellow-stroke.png');
+                    changeZoneColor(yellow);
+                    break;
+                case '2':
+                    realBucket.options.set('iconImageHref', 'Icons/trash-orange-stroke.png');
+                    changeZoneColor(yellow);
+                    break;
+                case '3':
+                    realBucket.options.set('iconImageHref', 'Icons/trash-red-stroke.png');
+                    changeZoneColor(red);
+                    break;
+            }
         }
-    }, 1000)
+    }, 1000);
 
     drawAreas();
+    changeZoneColor(yellow);
     hideAreas();
     addPlaceMark([55.793288, 49.126733]); // наш
-    addPlaceMark([55.773226,49.098625]); // оранжевый
+    realBucket = buckets[0];
+    addPlaceMark([55.773226, 49.098625]); // оранжевый
     buckets[1].options.set('iconImageHref', 'Icons/trash-orange-stroke.png');
-    addPlaceMark([55.752654,49.166603]);//красный
-    buckets[2].options.set('iconImageHref', 'Icons/trash-red-stroke.png');
+    addPlaceMark([55.752654, 49.166603]);//красный
+    buckets[2].options.set('iconImageHref', 'Icons/trash-yellow-stroke.png');
     addPlaceMark([55.797047, 49.092043]);
     addPlaceMark([55.801211, 49.140748]);
     addTruck([latitude, longitude]); //наш муссоровоз

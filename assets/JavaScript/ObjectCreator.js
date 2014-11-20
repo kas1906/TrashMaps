@@ -3,7 +3,7 @@ var green = '#6EE76888';
 var yellow = '#fafa0a88';
 var red = '#eb323288';
 
-var icons = [2, 3, 0, 0, 0];
+var icons = [2, 2, 0, 0, 0];
 
 function addPlaceMark(coord) {
     var myPlacemark = new ymaps.Placemark(coord, {

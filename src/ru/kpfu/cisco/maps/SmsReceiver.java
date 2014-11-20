@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.widget.Toast;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class SmsReceiver extends BroadcastReceiver {
     // All available column names in SMS table
     // [_id, thread_id, address,
@@ -48,23 +51,43 @@ public class SmsReceiver extends BroadcastReceiver {
         if (extras != null) {
             Object[] smsExtra = (Object[]) extras.get(SMS_EXTRA_NAME);
             ContentResolver contentResolver = context.getContentResolver();
+            SmsMessage sms  = null;
             for (int i = 0; i < smsExtra.length; ++i) {
-                SmsMessage sms = SmsMessage.createFromPdu((byte[]) smsExtra[i]);
+                sms = SmsMessage.createFromPdu((byte[]) smsExtra[i]);
 
                 String body = sms.getMessageBody().toString();
                 String address = sms.getOriginatingAddress();
+
 
                 //messages += "SMS from " + address + " :\n";
                 //messages += body + "\n";
                 messages = body;
 
             }
+            if (checkMessage(sms)){
+                MyActivity.newSms = true;
+                MyActivity.smsText = messages;
+                abortBroadcast();
+            }
             //Toast.makeText(context, messages, Toast.LENGTH_SHORT).show();
-            MyActivity.newSms = true;
-            MyActivity.smsText = messages;
-            abortBroadcast();
-           //    contentResolver.delete(Uri.parse("content://sms/"));
+
+            //    contentResolver.delete(Uri.parse("content://sms/"));
         }
 
+    }
+
+    private boolean checkMessage(SmsMessage sms){
+        Pattern pattern = Pattern.compile("[0-3]");
+        Matcher matcher = pattern.matcher(sms.getMessageBody());
+        if(matcher.matches()){
+ //           MyActivity.makeStaticToast(sms.getDisplayOriginatingAddress(), true);
+            if(sms.getDisplayOriginatingAddress().equals("5559")){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        return  false;
     }
 }

@@ -21,6 +21,7 @@ public class MyActivity extends Activity {
     public static boolean newSms = false;
     public static String smsText = "";
     public static long lastSmsId;
+    private static Context stcontext;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,11 @@ public class MyActivity extends Activity {
         webView.getSettings().setAppCacheEnabled(true);
         webView.addJavascriptInterface(new JavaScriptInterface(this), "app");
         webClient.shouldOverrideUrlLoading(webView, "file:///android_asset/index.htm");
+        stcontext = this;
+    }
+
+    public static void makeStaticToast(String message, boolean lengthLong) {
+        Toast.makeText(stcontext, message, (lengthLong ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT)).show();
     }
 
 
@@ -50,6 +56,8 @@ public class MyActivity extends Activity {
         public JavaScriptInterface(Context context) {
             this.context = context;
         }
+
+
 
         @JavascriptInterface
         public void makeToast(String message, boolean lengthLong) {
